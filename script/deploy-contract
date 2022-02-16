@@ -1,0 +1,32 @@
+#!/usr/bin/env bash
+cd $(git rev-parse --show-toplevel)/smart-contract-helper
+
+set -u
+
+docker-compose down
+
+export ADMIN_ADDRESS=$1
+export ORIGINATOR_PRIVATE_KEY=$2
+export NODE_URL=${3:-'http://art-basel.tzconnect.berlin:18732'}
+
+
+# yarn install
+yarn install -g || exit 1
+yarn build || exit 1
+
+yarn run smart-contract.helper compile-contract || exit 1
+yarn run smart-contract.helper deploy-contract | tee deploy.log || exit 1
+
+cd $(git rev-parse --show-toplevel)
+contract=`
+    cat smart-contract-helper/deploy.log \
+        | grep 'Contract deployed at' \
+        | awk -F':' '{print $2}' \
+        | sed 's/\ *//g'`
+
+
+sed -i "s/address:.*/address:\ \"$contract\"/g" config/kanvas.yaml
+sed -i "s/\"nftContract\":.*/\"nftContract\":\ \"$contract\",/g" config/peppermint_config.json
+sed -i "s/\"privateKey\":.*/\"privateKey\":\ \"$ORIGINATOR_PRIVATE_KEY\",/g" config/peppermint_config.json
+
+echo 'contract deployed. now `docker-compose up` can be run'

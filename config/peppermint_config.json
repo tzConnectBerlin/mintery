@@ -1,0 +1,15 @@
+{
+	"batchSize": 110,
+	"confirmations": 1,
+	"nftContract": "KT1En151Fw3doYdpGU5cxp5LeGzcsMZfdXet",
+	"privateKey": "edskS2WCxzhmRdQwKW6ivKmZP6CCkFGLkyaj94HbpTMFYoqmXhssAao92ZQQ99xcLzwwLLKM6ExwASQb55tPyT7fXjtTnkDt1y",
+	"rpcUrl": "http://art-basel.tzconnect.berlin:18732",
+	"pollingDelay": 10000,
+	"dbConnection": {
+		"user": "pguser",
+        "password": "pgpass",
+        "host": "db",
+        "port": 5432,
+        "database": "mintery"
+	}
+}

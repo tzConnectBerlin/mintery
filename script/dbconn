@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+
+PGHOST=localhost PGPORT=54324 PGUSER=pguser PGPASSWORD=pgpass PGDATABASE=mintery psql
