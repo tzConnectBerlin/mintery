@@ -12,11 +12,20 @@ Dependencies required before proceeding to Installation and Run:
 Before starting the mintery docker-compose setup, we need to first deploy an
 NFT contract that will be owned by you.
 
-Run the `script/deploy-contract.bash` script, giving your public tezos key (aka your tz1 address) as first argument, and the corresponding private key as second argument. For example:
+Run the `script/deploy-contract.bash` script, giving your public tezos key (aka your tz1 address) as first argument (note: it has to be an address that has some tez balance, see section "Address initialization" for more info), and the corresponding private key as second argument. For example:
 
 ```bash
 ./script/deploy-contract.bash tz1g3coajkc9N77XDy55pVEgBGWspQfYqMiH edsk...
 ```
+
+## Address initialization
+
+Deploying a contract requires some tez present in the address associated to the
+private key. Since we're deploying on a testnet (Hangzhou2net), we can use one
+of the public faucet services that provide us with free tez:
+
+- `@tezos_faucet_bot` on telegram (in our experience the easiest to use)
+- https://teztnets.xyz/hangzhounet-faucet (should work as well, but does require the `tezos-client` tool to be installed)
 
 # Run
 

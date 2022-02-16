@@ -9,7 +9,7 @@ services:
       POSTGRES_DB: mintery
 
   quepasa:
-    image: ghcr.io/tzconnectberlin/que-pasa:1.2.0
+    image: ghcr.io/tzconnectberlin/que-pasa:1.1.0
     entrypoint: |-
       bash -c '
         set -e -x
@@ -34,11 +34,8 @@ services:
     image: ghcr.io/tzconnectberlin/peppermint:1.1
     entrypoint: |-
       bash -c '
-        set -x
-        echo "$$PWD"
-        cat /build/config.json
-
         set -e -x
+
         while ! psql -d "$$DATABASE_URL" -c "select 1" ; do
           sleep 1
         done
