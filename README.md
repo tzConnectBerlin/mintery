@@ -60,3 +60,10 @@ Que Pasa lives in 2 schemas in the database:
 
 - `que_pasa`; for tables that aren't directly related to the contract storage values (such as the `levels` table, which just stores some info about what levels have been processed)
 - `onchain_mintery`; for tables that are directly related to the contract storage values
+
+## Example usage
+
+There's an example/ directory with some code that may help clarify how to interact with the database.
+
+Note however that this code wont work out of the box. It's solely here to present some
+snippets that may be of interest.
