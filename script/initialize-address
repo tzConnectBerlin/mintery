@@ -23,7 +23,7 @@ docker run \
             \"public_keys\": `cat .tezos-client/public_key_hashs`,
             \"private_keys\": `cat .tezos-client/secret_keys`
         }"
-    ' | tee $git_root/log/initialize-address.log
+    ' | tee $git_root/log/initialize-address.log || exit 1
 
 pub=`
     awk '/^Account faucet \(/,EOF { print $0 }' "$git_root"/log/initialize-address.log \
