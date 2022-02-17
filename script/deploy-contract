@@ -12,6 +12,9 @@ source "$git_root"/.env
 [ -z $ORIGINATOR_PRIVATE_KEY ] && echo 'ORIGINATOR_PRIVATE_KEY not defined in .env' && exit 1
 export NODE_URL=${NODE_URL:-'http://art-basel.tzconnect.berlin:18732'}
 
+export ADMIN_ADDRESS
+export ORIGINATOR_PRIVATE_KEY
+
 
 # yarn install
 yarn install -g || exit 1
