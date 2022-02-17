@@ -37,4 +37,6 @@ sed -i'.bak' "s/address:.*/address:\ \"${contract}\"/g" config/kanvas.yaml
 sed -i'.bak' "s/\"nftContract\":.*/\"nftContract\":\ \"$contract\",/g" config/peppermint_config.json
 sed -i'.bak' "s/\"privateKey\":.*/\"privateKey\":\ \"$ORIGINATOR_PRIVATE_KEY\",/g" config/peppermint_config.json
 
-echo 'contract deployed. now `docker-compose up` can be run'
+rm config/*.bak
+
+echo 'cntract deployed. now `docker-compose up` can be run'
