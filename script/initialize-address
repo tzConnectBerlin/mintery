@@ -13,6 +13,7 @@ $git_root/script/read-json > /tmp/faucet.json
 
 docker run \
     -it \
+    --dns 8.8.8.8 --dns 10.252.252.252 \
     -v /tmp/faucet.json:/tmp/faucet.json \
     --entrypoint /bin/sh \
     tezos/tezos:latest-release \
