@@ -22,7 +22,7 @@ yarn run smart-contract.helper deploy-contract | tee $git_root/log/deploy.log ||
 
 cd "$git_root"
 contract=`
-    cat smart-contract-helper/deploy.log \
+    cat "$git_root"/log/deploy.log \
         | grep 'Contract deployed at' \
         | awk -F':' '{print $2}' \
         | sed 's/\ *//g'`
