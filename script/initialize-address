@@ -3,26 +3,26 @@ git_root=`git rev-parse --show-toplevel`
 
 touch $git_root/.env
 
-#echo "please:
-#1). visit https://teztnets.xyz/hangzhounet-faucet
-#2). pass the anti bot test
-#3). then copy paste what is in the text box below \"Here is your activation key:\" into this terminal
-#...
-#"
-#$git_root/script/read-json > /tmp/faucet.json
-#
-#docker run \
-#    -it \
-#    -v /tmp/faucet.json:/tmp/faucet.json \
-#    --entrypoint /bin/sh \
-#    tezos/tezos:latest-release \
-#    -c '
-#        tezos-client --endpoint http://art-basel.tzconnect.berlin:18732 activate account faucet with /tmp/faucet.json || exit 1
-#        echo "{
-#            \"public_keys\": `cat .tezos-client/public_key_hashs`,
-#            \"private_keys\": `cat .tezos-client/secret_keys`
-#        }"
-#    ' | tee $git_root/log/initialize-address.log
+echo "please:
+1). visit https://teztnets.xyz/hangzhounet-faucet
+2). pass the anti bot test
+3). then copy paste what is in the text box below \"Here is your activation key:\" into this terminal
+...
+"
+$git_root/script/read-json > /tmp/faucet.json
+
+docker run \
+    -it \
+    -v /tmp/faucet.json:/tmp/faucet.json \
+    --entrypoint /bin/sh \
+    tezos/tezos:latest-release \
+    -c '
+        tezos-client --endpoint http://art-basel.tzconnect.berlin:18732 activate account faucet with /tmp/faucet.json || exit 1
+        echo "{
+            \"public_keys\": `cat .tezos-client/public_key_hashs`,
+            \"private_keys\": `cat .tezos-client/secret_keys`
+        }"
+    ' | tee $git_root/log/initialize-address.log
 
 pub=`
     awk '/^Account faucet \(/,EOF { print $0 }' "$git_root"/log/initialize-address.log \
