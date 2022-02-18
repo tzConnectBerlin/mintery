@@ -26,7 +26,7 @@ services:
       - db
     environment:
       DATABASE_URL: postgres://pguser:pgpass@db:5432/mintery
-      CONTRACT_SETTINGS: /config/kanvas.yaml
+      CONTRACT_SETTINGS: /config/quepasa_config.yaml
       NODE_URL: http://art-basel.tzconnect.berlin:18732
       BCD_NETWORK: hangzhou2net
 

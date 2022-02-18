@@ -6,6 +6,6 @@ set -u
 var=$1
 val=$2
 
-grep -v "$var" "$git_root"/.env > "$git_root"/.env_
+grep -v "^$var=" "$git_root"/.env > "$git_root"/.env_
 echo "$var=$val" >> "$git_root"/.env_
 mv "$git_root"/.env_ "$git_root"/.env

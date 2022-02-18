@@ -1,6 +1,14 @@
 #!/usr/bin/env bash
 git_root=`git rev-parse --show-toplevel`
 
+set -u
+
+
+command -v jq >/dev/null 2>&1 || {
+    echo >&2 'jq is a required prerequisite, it is currently not installed.'
+    exit 1
+}
+
 touch $git_root/.env
 
 echo "please:
@@ -9,7 +17,7 @@ echo "please:
 3). then copy paste what is in the text box below \"Here is your activation key:\" into this terminal
 ...
 "
-$git_root/script/read-json > /tmp/faucet.json || exit 1
+"$git_root"/script/read-json > /tmp/faucet.json || exit 1
 
 docker run \
     -it \
@@ -23,7 +31,7 @@ docker run \
             \"public_keys\": `cat .tezos-client/public_key_hashs`,
             \"private_keys\": `cat .tezos-client/secret_keys`
         }"
-    ' | tee $git_root/log/initialize-address.log || exit 1
+    ' | tee "$git_root"/log/initialize-address.log || exit 1
 
 pub=`
     awk '/^Account faucet \(/,EOF { print $0 }' "$git_root"/log/initialize-address.log \
