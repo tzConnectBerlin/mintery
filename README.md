@@ -41,8 +41,8 @@ Deploying a contract requires some tez present in the address associated to the
 private key. Since we're deploying on a testnet (Hangzhou2net), we can use one
 of the public faucet services that provide us with free tez:
 
-- `@tezos_faucet_bot` on telegram (in our experience the easiest to use)
-- https://teztnets.xyz/hangzhounet-faucet (should work as well, but does require the `tezos-client` tool to be installed)
+- `@tezos_faucet_bot` on telegram
+- https://teztnets.xyz/hangzhounet-faucet
 
 # Run
 
