@@ -13,6 +13,10 @@ Dependencies required before proceeding to Installation and Run:
 Before starting the mintery docker-compose setup, we need to first initialize an
 address with some tez, and then deploy an NFT contract that will be owned by you.
 
+If you prefer not to be bothered with the details, simply execute `./script/setup`.
+Otherwise, continue reading for more detailed information on what steps this `setup`
+sequentially applies.
+
 First, run the `script/initialize-address` script. This will provide you with
 a fresh Tezos address that has some tez loaded on the Hangzhou testnet. Alternatively,
 if you already have an address with tez ready, or you want to setup an address with tez
@@ -28,6 +32,8 @@ This file also allows a third optional setting, regardless of address initializa
 method, called "NODE_URL". By default we are currently using http://art-basel.tzconnect.berlin:18732. This is a Hangzhou2net testnet node. If you wish to deploy on a different net, set this variable to something else in the .env file.
 
 Then, run the `script/deploy-contract` script.
+
+If all went well it should say at the end "contract deployed. now `docker-compose up` can be run".
 
 ## Address initialization
 

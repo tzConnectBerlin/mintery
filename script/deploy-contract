@@ -16,12 +16,10 @@ export ADMIN_ADDRESS
 export ORIGINATOR_PRIVATE_KEY
 
 
-# yarn install
 yarn install || exit 1
 yarn build || exit 1
-yarn install -g || exit 1
 
-chmod +x lib/smart-contract.helper.js 
+chmod +x lib/smart-contract.helper.js
 yarn run smart-contract.helper compile-contract || exit 1
 yarn run smart-contract.helper deploy-contract | tee $git_root/log/deploy.log || exit 1
 
@@ -33,10 +31,10 @@ contract=`
         | sed 's/\ *//g'`
 
 
-sed -i'.bak' "s/address:.*/address:\ \"${contract}\"/g" config/kanvas.yaml
-sed -i'.bak' "s/\"nftContract\":.*/\"nftContract\":\ \"$contract\",/g" config/peppermint_config.json
-sed -i'.bak' "s/\"privateKey\":.*/\"privateKey\":\ \"$ORIGINATOR_PRIVATE_KEY\",/g" config/peppermint_config.json
+sed -i'.bak' "s/address:.*/address:\ \"${contract}\"/g" config/kanvas.yaml || exit 1
+sed -i'.bak' "s/\"nftContract\":.*/\"nftContract\":\ \"$contract\",/g" config/peppermint_config.json || exit 1
+sed -i'.bak' "s/\"privateKey\":.*/\"privateKey\":\ \"$ORIGINATOR_PRIVATE_KEY\",/g" config/peppermint_config.json || exit 1
 
 rm config/*.bak
 
-echo 'cntract deployed. now `docker-compose up` can be run'
+echo 'contract deployed. now `docker-compose up` can be run'

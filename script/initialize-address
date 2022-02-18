@@ -9,7 +9,7 @@ echo "please:
 3). then copy paste what is in the text box below \"Here is your activation key:\" into this terminal
 ...
 "
-$git_root/script/read-json > /tmp/faucet.json
+$git_root/script/read-json > /tmp/faucet.json || exit 1
 
 docker run \
     -it \
