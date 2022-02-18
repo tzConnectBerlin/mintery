@@ -4,6 +4,7 @@ Dependencies required before proceeding to Installation and Run:
 
 - docker-compose
 - yarn
+- [jq](https://stedolan.github.io/jq/)
 - psql (from postgresql, only needed for using the `script/dbconn` script, not a necessity)
 
 
