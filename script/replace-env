@@ -1,11 +1,15 @@
 #!/usr/bin/env bash
 git_root=`git rev-parse --show-toplevel`
+cd "$git_root"
 
 set -u
 
 var=$1
 val=$2
 
-grep -v "^$var=" "$git_root"/.env > "$git_root"/.env_
-echo "$var=$val" >> "$git_root"/.env_
-mv "$git_root"/.env_ "$git_root"/.env
+if grep "^$var=" .env >/dev/null ; then
+    sed -i'.bak' "s/^$var=.*$/$var=$val/" .env
+    rm .env.bak
+else
+    echo "$var=$val" >> .env
+fi
