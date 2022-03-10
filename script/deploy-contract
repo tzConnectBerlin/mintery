@@ -15,20 +15,59 @@ export NODE_URL=${NODE_URL:-'https://ithacanet.ecadinfra.com'}
 export ADMIN_ADDRESS=$ORIGINATOR_ADDRESS
 export ORIGINATOR_PRIVATE_KEY=$ORIGINATOR_PRIV_KEY
 
+docker run \
+    -it \
+    --dns 8.8.8.8 --dns 10.252.252.252 \
+    -v /tmp/faucet.json:/tmp/faucet.json \
+    -v "$script":/tmp/script.mich \
+    --entrypoint /bin/sh \
+    tezos/tezos:latest-release \
+    -c '
+        set -x
+        tezos-client --endpoint http://art-basel.tzconnect.berlin:18732 originate contract testname transferring 0 from faucet running /tmp/contract.mich --init 0 || exit 1
+        tezos-client --endpoint http://art-basel.tzconnect.berlin:18732 activate account faucet with /tmp/faucet.json || exit 1
+        PUB_KEY=`cat .tezos-client/public_key_hashs`
+        echo "pub key: \"$PUB_KEY\""
+        PRIV_KEY=`cat .tezos-client/secret_keys`
+        echo "{
+            \"public_keys\": $PUB_KEY,
+            \"private_keys\": $PRIV_KEY
+        }"
+    ' | tee "$git_root"/log/full.log || exit 1
 
-yarn install || exit 1
-yarn build || exit 1
 
-chmod +x lib/smart-contract.helper.js
-yarn run smart-contract.helper compile-contract || exit 1
-yarn run smart-contract.helper deploy-contract | tee $git_root/log/deploy.log || exit 1
+exit
 
-cd "$git_root"
-contract_address=`
-    cat "$git_root"/log/deploy.log \
-        | grep 'Contract deployed at' \
-        | awk -F':' '{print $2}' \
-        | sed 's/\ *//g'`
+
+#cd "$git_root"/smart-contract-helper
+#
+#set -u
+#
+#docker-compose down
+#
+#source "$git_root"/.env
+#
+#[ -z $ADMIN_ADDRESS ] && echo 'ADMIN_ADDRESS not defined in .env' && exit 1
+#[ -z $ORIGINATOR_PRIVATE_KEY ] && echo 'ORIGINATOR_PRIVATE_KEY not defined in .env' && exit 1
+#export NODE_URL=${NODE_URL:-'http://hangzhou.tzconnect.berlin:8734'}
+#
+#export ADMIN_ADDRESS
+#export ORIGINATOR_PRIVATE_KEY
+#
+#
+#yarn install || exit 1
+#yarn build || exit 1
+#
+#chmod +x lib/smart-contract.helper.js
+#yarn run smart-contract.helper compile-contract || exit 1
+#yarn run smart-contract.helper deploy-contract | tee $git_root/log/deploy.log || exit 1
+#
+#cd "$git_root"
+#contract_address=`
+#    cat "$git_root"/log/deploy.log \
+#        | grep 'Contract deployed at' \
+#        | awk -F':' '{print $2}' \
+#        | sed 's/\ *//g'`
 
 
 cat << EOF > "$git_root"/config/quepasa_config.yaml
@@ -42,7 +81,7 @@ cat << EOF > "$git_root"/config/peppermint_config.json
     "batchSize": 110,
     "confirmations": 1,
     "nftContract": "$contract_address",
-    "privateKey": "$ORIGINATOR_PRIV_KEY",
+    "privateKey": "$ORIGINATOR_PRIVATE_KEY",
     "rpcUrl": "$NODE_URL",
     "pollingDelay": 10000,
     "dbConnection": {
@@ -56,5 +95,3 @@ cat << EOF > "$git_root"/config/peppermint_config.json
 EOF
 
 echo 'contract deployed. now `docker-compose up` can be run'
-
-"$git_root"/script/replace-env CONTRACT_ADDRESS "\"$contract_address\""
