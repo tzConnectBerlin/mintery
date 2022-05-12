@@ -10,7 +10,7 @@ source "$git_root"/.env
 
 [ -z $ORIGINATOR_ADDRESS ] && echo 'ORIGINATOR_ADDRESS not defined in .env' && exit 1
 [ -z $ORIGINATOR_PRIV_KEY ] && echo 'ORIGINATOR_PRIV_KEY not defined in .env' && exit 1
-export NODE_URL=${NODE_URL:-'https://ithaca-archive.tzconnect.berlin'}
+export NODE_URL=${NODE_URL:-'https://ithacanet.ecadinfra.com'}
 
 export ADMIN_ADDRESS=$ORIGINATOR_ADDRESS
 export ORIGINATOR_PRIVATE_KEY=$ORIGINATOR_PRIV_KEY

@@ -19,7 +19,7 @@ echo "please:
 "
 "$git_root"/script/read-json > /tmp/faucet.json || exit 1
 
-NODE_URL=${NODE_URL:-'https://ithaca-archive.tzconnect.berlin'}
+NODE_URL=${NODE_URL:-'https://ithacanet.ecadinfra.com'}
 docker run \
     -it \
     --dns 8.8.8.8 --dns 10.252.252.252 \
