@@ -12,31 +12,39 @@ command -v jq >/dev/null 2>&1 || {
 touch $git_root/.env
 
 echo "please:
-1). visit https://teztnets.xyz/hangzhounet-faucet
+1). visit https://teztnets.xyz/ithacanet-faucet
 2). pass the anti bot test
 3). then copy paste what is in the text box below \"Here is your activation key:\" into this terminal
 ...
 "
 "$git_root"/script/read-json > /tmp/faucet.json || exit 1
 
+NODE_URL=${NODE_URL:-'https://ithacanet.ecadinfra.com'}
 docker run \
     -it \
     --dns 8.8.8.8 --dns 10.252.252.252 \
     -v /tmp/faucet.json:/tmp/faucet.json \
     --entrypoint /bin/sh \
-    tezos/tezos:latest-release \
-    -c '
-        tezos-client --endpoint http://art-basel.tzconnect.berlin:18732 activate account faucet with /tmp/faucet.json || exit 1
-        echo "{
-            \"public_keys\": `cat .tezos-client/public_key_hashs`,
-            \"private_keys\": `cat .tezos-client/secret_keys`
-        }"
-    ' | tee "$git_root"/log/initialize-address.log || exit 1
+    tezos/tezos:v12-release \
+    -c "
+        tezos-client --endpoint $NODE_URL --wait 1 activate account faucet with /tmp/faucet.json || exit 1
+        echo \"{
+            \\\"public_key_hashs\\\": \`cat .tezos-client/public_key_hashs\`,
+            \\\"public_keys\\\": \`cat .tezos-client/public_keys\`,
+            \\\"private_keys\\\": \`cat .tezos-client/secret_keys\`
+        }\"
+    " | tee "$git_root"/log/initialize-address.log || exit 1
+
+pub_hash=`
+    awk '/^Account faucet \(/,EOF { print $0 }' "$git_root"/log/initialize-address.log \
+    | tail -n +2 \
+    | jq '.public_key_hashs[].value'`
 
 pub=`
     awk '/^Account faucet \(/,EOF { print $0 }' "$git_root"/log/initialize-address.log \
     | tail -n +2 \
-    | jq '.public_keys[].value'`
+    | jq '.public_keys[].value' \
+    | sed 's/unencrypted://g'`
 
 priv=`
     awk '/^Account faucet \(/,EOF { print $0 }' "$git_root"/log/initialize-address.log \
@@ -44,5 +52,6 @@ priv=`
     | jq '.private_keys[].value' \
     | sed 's/unencrypted://g'`
 
-"$git_root"/script/replace-env ADMIN_ADDRESS "$pub"
-"$git_root"/script/replace-env ORIGINATOR_PRIVATE_KEY "$priv"
+"$git_root"/script/replace-env ORIGINATOR_ADDRESS "$pub_hash"
+"$git_root"/script/replace-env ORIGINATOR_PUB_KEY "$pub"
+"$git_root"/script/replace-env ORIGINATOR_PRIV_KEY "$priv"
