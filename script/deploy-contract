@@ -12,8 +12,8 @@ source "$git_root"/.env
 [ -z $ORIGINATOR_PRIV_KEY ] && echo 'ORIGINATOR_PRIV_KEY not defined in .env' && exit 1
 export NODE_URL=${NODE_URL:-'https://ithaca-archive.tzconnect.berlin'}
 
-export ORIGINATOR_ADDRESS
-export ORIGINATOR_PRIV_KEY
+export ADMIN_ADDRESS=$ORIGINATOR_ADDRESS
+export ORIGINATOR_PRIVATE_KEY=$ORIGINATOR_PRIV_KEY
 
 
 yarn install || exit 1
@@ -56,3 +56,5 @@ cat << EOF > "$git_root"/config/peppermint_config.json
 EOF
 
 echo 'contract deployed. now `docker-compose up` can be run'
+
+"$git_root"/script/replace-env CONTRACT_ADDRESS "\"$contract_address\""
