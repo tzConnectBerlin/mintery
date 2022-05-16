@@ -6,7 +6,7 @@ set -u
 
 docker-compose down
 
-source "$git_root"/.env
+source ../.env
 
 [ -z $ORIGINATOR_ADDRESS ] && echo 'ORIGINATOR_ADDRESS not defined in .env' && exit 1
 [ -z $ORIGINATOR_PRIV_KEY ] && echo 'ORIGINATOR_PRIV_KEY not defined in .env' && exit 1
@@ -21,23 +21,23 @@ yarn build || exit 1
 
 chmod +x lib/smart-contract.helper.js
 yarn run smart-contract.helper compile-contract || exit 1
-yarn run smart-contract.helper deploy-contract | tee $git_root/log/deploy.log || exit 1
+yarn run smart-contract.helper deploy-contract | tee ../log/deploy.log || exit 1
 
-cd "$git_root"
+cd $SCRIPT_DIR/..
 contract_address=`
-    cat "$git_root"/log/deploy.log \
+    cat log/deploy.log \
         | grep 'Contract deployed at' \
         | awk -F':' '{print $2}' \
         | sed 's/\ *//g'`
 
 
-cat << EOF > "$git_root"/config/quepasa_config.yaml
+cat << EOF > config/quepasa_config.yaml
 contracts:
 - name: "onchain_mintery"
   address: "$contract_address"
 EOF
 
-cat << EOF > "$git_root"/config/peppermint_config.json
+cat << EOF > config/peppermint_config.json
 {
     "batchSize": 110,
     "confirmations": 1,
@@ -57,4 +57,4 @@ EOF
 
 echo 'contract deployed. now `docker-compose up` can be run'
 
-"$git_root"/script/replace-env CONTRACT_ADDRESS "\"$contract_address\""
+./script/replace-env CONTRACT_ADDRESS "\"$contract_address\""
