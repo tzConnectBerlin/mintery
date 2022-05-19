@@ -18,13 +18,17 @@ echo "please:
 3). then copy paste what is in the text box below \"Here is your activation key:\" into this terminal
 ...
 "
-./script/read-json > /tmp/faucet.json || exit 1
+
+faucet_file="`mktemp`.json"
+./script/read-json > "$faucet_file" || exit 1
+
+echo "file is: $faucet_file"
 
 NODE_URL=${NODE_URL:-'https://ithacanet.ecadinfra.com'}
 docker run \
     -it \
     --dns 8.8.8.8 --dns 10.252.252.252 \
-    -v /tmp/faucet.json:/tmp/faucet.json \
+    -v "$faucet_file":/tmp/faucet.json \
     --entrypoint /bin/sh \
     tezos/tezos:v12-release \
     -c "
