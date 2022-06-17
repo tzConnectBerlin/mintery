@@ -4,14 +4,17 @@ cd $SCRIPT_DIR/..
 
 set -u
 
-source .env
+set -a
+source ./env
+set +a
 
-[ -z $ORIGINATOR_ADDRESS ] && echo 'ORIGINATOR_ADDRESS not defined in .env' && exit 1
-[ -z $ORIGINATOR_PRIV_KEY ] && echo 'ORIGINATOR_PRIV_KEY not defined in .env' && exit 1
-[ -z $CONTRACT ] && echo 'CONTRACT_PATH is not defined in .env' && exit 1
-[ -z $INITIAL_STORAGE ] && echo 'STORAGE is not defined in .env' && exit 1
+[ -z $ORIGINATOR_ADDRESS ] && echo 'ORIGINATOR_ADDRESS not defined in env' && exit 1
+[ -z $ORIGINATOR_PRIV_KEY ] && echo 'ORIGINATOR_PRIV_KEY not defined in env' && exit 1
+[ -z $CONTRACT ] && echo 'CONTRACT_PATH is not defined in env' && exit 1
 export NODE_URL=${NODE_URL:-'https://ithacanet.ecadinfra.com'}
 export BURN_CAP=${BURN_CAP:-'0.1'}
+
+INITIAL_STORAGE=`envsubst < contracts/${CONTRACT%.*}.storage`
 
 docker run \
     -it \
@@ -24,6 +27,7 @@ docker run \
         tezos-client --endpoint $NODE_URL --wait 1 originate contract your_contract transferring 0 from originator_address running /tmp/contract.tz --init '$INITIAL_STORAGE' --burn-cap $BURN_CAP
     " | tee log/deploy.log || exit 1
 
+cat log/deploy.log | grep --quiet 'Fatal error' && exit 1
 
 contract_address=`
     cat log/deploy.log \

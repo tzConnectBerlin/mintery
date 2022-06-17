@@ -2,15 +2,15 @@
 
 Dependencies required before proceeding to Installation and Run:
 
-- [docker-compose](https://docs.docker.com/compose/install/)
-- [yarn](https://yarnpkg.com/getting-started/install)
+- [docker](https://docs.docker.com)
 - [jq](https://stedolan.github.io/jq/download/)
+- envsubst
 - [psql](https://www.postgresql.org/docs/9.2/app-psql.html) (from postgresql, only needed for using the `script/dbconn` script, not a necessity)
 
 
 # Installation
 
-Before starting the mintery docker-compose setup, we need to first initialize an
+Before starting the mintery docker setup, we need to first initialize an
 address with some tez, and then deploy an NFT contract that will be owned by you.
 
 If you prefer not to be bothered with the details, simply execute `./script/setup`.
