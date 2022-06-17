@@ -10,7 +10,7 @@ command -v jq >/dev/null 2>&1 || {
     exit 1
 }
 
-touch .env
+touch ./env
 
 echo "please:
 1). visit https://teztnets.xyz/ithacanet-faucet
@@ -32,7 +32,7 @@ docker run \
     --entrypoint /bin/sh \
     tezos/tezos:v12-release \
     -c "
-        tezos-client --endpoint $NODE_URL --wait 1 activate account faucet with /tmp/faucet.json || exit 1
+        tezos-client --endpoint $NODE_URL --wait 2 activate account faucet with /tmp/faucet.json || exit 1
         echo \"{
             \\\"public_key_hashs\\\": \`cat .tezos-client/public_key_hashs\`,
             \\\"public_keys\\\": \`cat .tezos-client/public_keys\`,

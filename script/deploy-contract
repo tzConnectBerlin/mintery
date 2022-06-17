@@ -1,60 +1,38 @@
 #!/usr/bin/env bash
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
-cd $SCRIPT_DIR/../smart-contract-helper
+cd $SCRIPT_DIR/..
 
 set -u
 
-docker-compose down
+set -a
+source ./env
+set +a
 
-source ../.env
+[ -z $ORIGINATOR_ADDRESS ] && echo 'ORIGINATOR_ADDRESS not defined in env' && exit 1
+[ -z $ORIGINATOR_PRIV_KEY ] && echo 'ORIGINATOR_PRIV_KEY not defined in env' && exit 1
 
-[ -z $ORIGINATOR_ADDRESS ] && echo 'ORIGINATOR_ADDRESS not defined in .env' && exit 1
-[ -z $ORIGINATOR_PRIV_KEY ] && echo 'ORIGINATOR_PRIV_KEY not defined in .env' && exit 1
+export CONTRACT=${CONTRACT:-'fa2_multi_asset'}
 export NODE_URL=${NODE_URL:-'https://ithacanet.ecadinfra.com'}
+export BURN_CAP=${BURN_CAP:-'0.1'}
 
-export ADMIN_ADDRESS=$ORIGINATOR_ADDRESS
-export ORIGINATOR_PRIVATE_KEY=$ORIGINATOR_PRIV_KEY
+INITIAL_STORAGE=`envsubst < contracts/${CONTRACT}.storage`
 
+docker run \
+    -it \
+    --dns 8.8.8.8 --dns 10.252.252.252 \
+    -v "$PWD/contracts/${CONTRACT}.tz":/tmp/contract.tz \
+    --entrypoint /bin/sh \
+    tezos/tezos:latest \
+    -c "
+        tezos-client --endpoint $NODE_URL import secret key originator_address "unencrypted:$ORIGINATOR_PRIV_KEY" || exit 1
+        tezos-client --endpoint $NODE_URL --wait 1 originate contract your_contract transferring 0 from originator_address running /tmp/contract.tz --init '$INITIAL_STORAGE' --burn-cap $BURN_CAP
+    " | tee log/deploy.log || exit 1
 
-yarn install || exit 1
-yarn build || exit 1
+cat log/deploy.log | grep --quiet 'Fatal error' && exit 1
 
-chmod +x lib/smart-contract.helper.js
-yarn run smart-contract.helper compile-contract || exit 1
-yarn run smart-contract.helper deploy-contract | tee ../log/deploy.log || exit 1
-
-cd $SCRIPT_DIR/..
 contract_address=`
     cat log/deploy.log \
-        | grep 'Contract deployed at' \
-        | awk -F':' '{print $2}' \
-        | sed 's/\ *//g'`
-
-
-cat << EOF > config/quepasa_config.yaml
-contracts:
-- name: "onchain_mintery"
-  address: "$contract_address"
-EOF
-
-cat << EOF > config/peppermint_config.json
-{
-    "batchSize": 110,
-    "confirmations": 1,
-    "nftContract": "$contract_address",
-    "privateKey": "$ORIGINATOR_PRIV_KEY",
-    "rpcUrl": "$NODE_URL",
-    "pollingDelay": 10000,
-    "dbConnection": {
-        "user": "pguser",
-        "password": "pgpass",
-        "host": "db",
-        "port": 5432,
-        "database": "mintery"
-    }
-}
-EOF
-
-echo 'contract deployed. now `docker-compose up` can be run'
-
+        | grep --basic-regexp '^New contract .* originated\.' \
+        | awk -F' ' '{print $3}'`
 ./script/replace-env CONTRACT_ADDRESS "\"$contract_address\""
+echo "contract deployed. address: $contract_address"

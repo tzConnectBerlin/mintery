@@ -7,9 +7,9 @@ set -u
 var=$1
 val=$2
 
-if grep "^$var=" .env >/dev/null ; then
-    sed -i'.bak' "s/^$var=.*$/$var=$val/" .env
-    rm .env.bak
+if grep "^$var=" env >/dev/null ; then
+    sed -i'.bak' "s/^$var=.*$/$var=$val/" env
+    rm env.bak
 else
-    echo "$var=$val" >> .env
+    echo "$var=$val" >> env
 fi
