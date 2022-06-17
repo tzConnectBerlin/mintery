@@ -1,1 +1,9 @@
-Pair (Pair (Pair (Pair "$ORIGINATOR_ADDRESS" False) None) (Pair (Pair {} {}) (Pair {} {}))) {}
+Pair
+    (Pair
+        (Pair
+            (Pair "$ORIGINATOR_ADDRESS" False)
+            None)
+        (Pair
+            (Pair {} {})
+            (Pair {} {})))
+    {}
