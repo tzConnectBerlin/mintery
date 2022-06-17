@@ -10,16 +10,17 @@ set +a
 
 [ -z $ORIGINATOR_ADDRESS ] && echo 'ORIGINATOR_ADDRESS not defined in env' && exit 1
 [ -z $ORIGINATOR_PRIV_KEY ] && echo 'ORIGINATOR_PRIV_KEY not defined in env' && exit 1
-[ -z $CONTRACT ] && echo 'CONTRACT_PATH is not defined in env' && exit 1
+
+export CONTRACT=${CONTRACT:-'fa2_multi_asset'}
 export NODE_URL=${NODE_URL:-'https://ithacanet.ecadinfra.com'}
 export BURN_CAP=${BURN_CAP:-'0.1'}
 
-INITIAL_STORAGE=`envsubst < contracts/${CONTRACT%.*}.storage`
+INITIAL_STORAGE=`envsubst < contracts/${CONTRACT}.storage`
 
 docker run \
     -it \
     --dns 8.8.8.8 --dns 10.252.252.252 \
-    -v "$PWD/contracts/$CONTRACT":/tmp/contract.tz \
+    -v "$PWD/contracts/${CONTRACT}.tz":/tmp/contract.tz \
     --entrypoint /bin/sh \
     tezos/tezos:latest \
     -c "
