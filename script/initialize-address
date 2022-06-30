@@ -13,7 +13,7 @@ command -v jq >/dev/null 2>&1 || {
 touch ./env
 
 echo "please:
-1). visit https://teztnets.xyz/ithacanet-faucet
+1). visit https://teztnets.xyz/ghostnet-faucet
 2). pass the anti bot test
 3). then copy paste what is in the text box below \"Here is your activation key:\" into this terminal
 ...
@@ -24,13 +24,13 @@ faucet_file="`mktemp`.json"
 
 echo "file is: $faucet_file"
 
-NODE_URL=${NODE_URL:-'https://ithacanet.ecadinfra.com'}
+NODE_URL=${NODE_URL:-'https://ithaca-archive.tzconnect.berlin'}
 docker run \
     -it \
     --dns 8.8.8.8 --dns 10.252.252.252 \
     -v "$faucet_file":/tmp/faucet.json \
     --entrypoint /bin/sh \
-    tezos/tezos:v12-release \
+    tezos/tezos:v13-release \
     -c "
         tezos-client --endpoint $NODE_URL --wait 2 activate account faucet with /tmp/faucet.json || exit 1
         echo \"{
