@@ -19,10 +19,9 @@ INITIAL_STORAGE=`envsubst < contracts/${CONTRACT}.storage`
 
 docker run \
     -it \
-    --dns 8.8.8.8 --dns 10.252.252.252 \
     -v "$PWD/contracts/${CONTRACT}.tz":/tmp/contract.tz \
     --entrypoint /bin/sh \
-    tezos/tezos:latest \
+    tezos/tezos:v13-release \
     -c "
         tezos-client --endpoint $NODE_URL import secret key originator_address "unencrypted:$ORIGINATOR_PRIV_KEY" || exit 1
         tezos-client --endpoint $NODE_URL --wait 1 originate contract $CONTRACT transferring 0 from originator_address running /tmp/contract.tz --init '$INITIAL_STORAGE' --burn-cap $BURN_CAP

@@ -27,7 +27,6 @@ echo "file is: $faucet_file"
 NODE_URL=${NODE_URL:-'https://ithaca-archive.tzconnect.berlin'}
 docker run \
     -it \
-    --dns 8.8.8.8 --dns 10.252.252.252 \
     -v "$faucet_file":/tmp/faucet.json \
     --entrypoint /bin/sh \
     tezos/tezos:v13-release \
