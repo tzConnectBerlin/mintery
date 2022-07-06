@@ -24,12 +24,12 @@ faucet_file="`mktemp`.json"
 
 echo "file is: $faucet_file"
 
-if [[ "$NODE_URL" == 'https://ithaca-archive.tzconnect.berlin' ]]; then
+if [[ "${NODE_URL:-''}" == 'https://ithaca-archive.tzconnect.berlin' ]]; then
     # for some reason, our own node is incredibly slow with acknowledging the account activation worked, better to use another node.
     unset NODE_URL
 fi
 
-NODE_URL=${NODE_URL:-'https://ithacanet.tezos.marigold.dev'}
+export NODE_URL=${NODE_URL:-'https://ithacanet.tezos.marigold.dev'}
 docker run \
     -it \
     -v "$faucet_file":/tmp/faucet.json \
