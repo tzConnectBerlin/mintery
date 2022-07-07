@@ -5,7 +5,6 @@ Dependencies required before proceeding to Installation and Run:
 - [docker](https://docs.docker.com)
 - [jq](https://stedolan.github.io/jq/download/)
 - envsubst
-- [psql](https://www.postgresql.org/docs/9.2/app-psql.html) (from postgresql, only needed for using the `script/dbconn` script, not a necessity)
 
 
 # Installation
