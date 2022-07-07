@@ -22,19 +22,12 @@ echo "please:
 faucet_file="`mktemp`.json"
 ./script/read-json > "$faucet_file" || exit 1
 
-echo "file is: $faucet_file"
-
-if [[ "${NODE_URL:-''}" == 'https://ithaca-archive.tzconnect.berlin' ]]; then
-    # for some reason, our own node is incredibly slow with acknowledging the account activation worked, better to use another node.
-    unset NODE_URL
-fi
-
-export NODE_URL=${NODE_URL:-'https://ithacanet.tezos.marigold.dev'}
+NODE_URL=${NODE_URL:-'https://ithaca-archive.tzconnect.berlin'}
+echo "targeting node: $NODE_URL"
 docker run \
-    -it \
     -v "$faucet_file":/tmp/faucet.json \
     --entrypoint /bin/sh \
-    tezos/tezos:v13-release \
+    tezos/tezos:latest \
     -c "
         tezos-client --endpoint $NODE_URL --wait 1 activate account faucet with /tmp/faucet.json || exit 1
         echo \"{

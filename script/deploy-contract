@@ -12,16 +12,16 @@ set +a
 [ -z $ORIGINATOR_PRIV_KEY ] && echo 'ORIGINATOR_PRIV_KEY not defined in env' && exit 1
 
 export CONTRACT=${CONTRACT:-'fa2_multi_asset'}
-export NODE_URL=${NODE_URL:-'https://ithacanet.ecadinfra.com'}
+export NODE_URL=${NODE_URL:-'https://ithaca-archive.tzconnect.berlin'}
 export BURN_CAP=${BURN_CAP:-'0.1'}
 
 INITIAL_STORAGE=`envsubst < contracts/${CONTRACT}.storage`
 
+echo "targeting node: $NODE_URL"
 docker run \
-    -it \
     -v "$PWD/contracts/${CONTRACT}.tz":/tmp/contract.tz \
     --entrypoint /bin/sh \
-    tezos/tezos:v13-release \
+    tezos/tezos:latest \
     -c "
         tezos-client --endpoint $NODE_URL import secret key originator_address "unencrypted:$ORIGINATOR_PRIV_KEY" || exit 1
         tezos-client --endpoint $NODE_URL --wait 1 originate contract $CONTRACT transferring 0 from originator_address running /tmp/contract.tz --init '$INITIAL_STORAGE' --burn-cap $BURN_CAP
