@@ -10,50 +10,28 @@ command -v jq >/dev/null 2>&1 || {
     exit 1
 }
 
+NODE_URL=${NODE_URL:-'https://ghostnet-archive.tzconnect.berlin'}
+addr_gen_res=`docker run tezos/tezos:latest tezos-client --endpoint $NODE_URL stresstest gen keys 1`
+
+pkh=`echo "$addr_gen_res" | jq -r '.[0].pkh'`
+pk=`echo "$addr_gen_res" | jq -r '.[0].pk'`
+sk=`echo "$addr_gen_res" | jq -r '.[0].sk'`
+
 touch ./env
 
+./script/replace-env ORIGINATOR_ADDRESS "$pkh"
+./script/replace-env ORIGINATOR_PUB_KEY "$pk"
+./script/replace-env ORIGINATOR_PRIV_KEY "$sk"
+
 echo "please:
-1). visit https://teztnets.xyz/ghostnet-faucet
-2). pass the anti bot test
-3). then copy paste what is in the text box below \"Here is your activation key:\" into this terminal
-...
-"
+1). visit https://faucet.ghostnet.teztnets.xyz
+2). enter "$pkh" into the box in section 'Or fund any address'
+3). press 'request 6001 tez' in that same section
+4). this script will continue to wait until the tez has arrived into the account"
 
-faucet_file="`mktemp`.json"
-./script/read-json > "$faucet_file" || exit 1
-
-NODE_URL=${NODE_URL:-'https://ithaca-archive.tzconnect.berlin'}
-echo "targeting node: $NODE_URL"
-docker run \
-    -v "$faucet_file":/tmp/faucet.json \
-    --entrypoint /bin/sh \
-    tezos/tezos:latest \
-    -c "
-        tezos-client --endpoint $NODE_URL --wait 1 activate account faucet with /tmp/faucet.json || exit 1
-        echo \"{
-            \\\"public_key_hashs\\\": \`cat .tezos-client/public_key_hashs\`,
-            \\\"public_keys\\\": \`cat .tezos-client/public_keys\`,
-            \\\"private_keys\\\": \`cat .tezos-client/secret_keys\`
-        }\"
-    " | tee log/initialize-address.log || exit 1
-
-pub_hash=`
-    awk '/^Account faucet \(/,EOF { print $0 }' log/initialize-address.log \
-    | tail -n +2 \
-    | jq '.public_key_hashs[].value'`
-
-pub=`
-    awk '/^Account faucet \(/,EOF { print $0 }' log/initialize-address.log \
-    | tail -n +2 \
-    | jq '.public_keys[].value' \
-    | sed 's/unencrypted://g'`
-
-priv=`
-    awk '/^Account faucet \(/,EOF { print $0 }' log/initialize-address.log \
-    | tail -n +2 \
-    | jq '.private_keys[].value' \
-    | sed 's/unencrypted://g'`
-
-./script/replace-env ORIGINATOR_ADDRESS "$pub_hash"
-./script/replace-env ORIGINATOR_PUB_KEY "$pub"
-./script/replace-env ORIGINATOR_PRIV_KEY "$priv"
+while [ `http https://api.ghostnet.tzkt.io/v1/accounts/$pkh/balance` -eq 0 ]; do
+    echo -n '.'
+    sleep 1
+done
+echo
+echo "fresh address $pkh initialized"
