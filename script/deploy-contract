@@ -12,7 +12,7 @@ set +a
 [ -z $ORIGINATOR_PRIV_KEY ] && echo 'ORIGINATOR_PRIV_KEY not defined in env' && exit 1
 
 export CONTRACT=${CONTRACT:-'fa2_multi_asset'}
-export NODE_URL=${NODE_URL:-'https://ithaca-archive.tzconnect.berlin'}
+export NODE_URL=${NODE_URL:-'https://ghostnet.tezos.marigold.dev'}
 export BURN_CAP=${BURN_CAP:-'0.1'}
 
 INITIAL_STORAGE=`envsubst < contracts/${CONTRACT}.storage`
