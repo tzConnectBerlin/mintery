@@ -20,6 +20,7 @@ INITIAL_STORAGE=`envsubst < contracts/${CONTRACT}.storage`
 echo "targeting node: $NODE_URL"
 docker run \
     -v "$PWD/contracts/${CONTRACT}.tz":/tmp/contract.tz \
+    ${DOCKER_ARGS:-} \
     --entrypoint /bin/sh \
     tezos/tezos:latest \
     -c "
