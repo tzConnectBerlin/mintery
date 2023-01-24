@@ -4,7 +4,7 @@ A repo with some useful scripts for deploying contracts onto Tezos.
 
 ## Prerequisites
 
-Dependencies required before proceeding to Installation and Run:
+Dependencies required:
 
 - [docker](https://docs.docker.com)
 - [jq](https://stedolan.github.io/jq/download/)
@@ -16,10 +16,10 @@ The `env` file serves as both input as well as output. The following variables c
 
 ```
 NETWORK=.. (optional, defaults to ghostnet)
-NODE_URL=.. (optional, defaults to https://ghostnet-archive.tzconnect.berlin
+NODE_URL=.. (optional, defaults to https://ghostnet-archive.tzconnect.berlin)
 
 CONTRACT=.. (required, has to be the name (without extension) of a contract that is present in contracts/)
-BURN_CAP=.. (optional, defaults to 0.1, it definesthe deployment cost in tez)
+BURN_CAP=.. (optional, defaults to 0.1, it defines the deployment cost in tez)
 
 ORIGINATOR_ADDRESS=.. (optional if not mainnet, otherwise required, the tz address used to deploy the contract)
 ORIGINATOR_PRIV_KEY=.. (same as above)
