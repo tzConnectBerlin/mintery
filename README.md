@@ -1,42 +1,34 @@
-# Prerequisites
+# Mintery
+
+A repo with some useful scripts for deploying contracts onto Tezos.
+
+## Prerequisites
 
 Dependencies required before proceeding to Installation and Run:
 
 - [docker](https://docs.docker.com)
 - [jq](https://stedolan.github.io/jq/download/)
-- envsubst
+- [envsubst](https://man7.org/linux/man-pages/man1/envsubst.1.html)
 
+## Setup
 
-# Installation
+The `env` file serves as both input as well as output. The following variables can be set for input:
 
-Before starting the mintery docker setup, we need to first initialize an
-address with some tez, and then deploy an NFT contract that will be owned by you.
-
-If you prefer not to be bothered with the details, simply execute `./script/setup`.
-Otherwise, continue reading for more detailed information on what steps this `setup`
-sequentially applies.
-
-First, run the `script/initialize-address` script. This will provide you with
-a fresh Tezos address that has some tez loaded on the Hangzhou testnet. Alternatively,
-if you already have an address with tez ready, or you want to setup an address with tez
-in a different way (see "Address initialization" section), you can skip this step
-and instead write your public and private key into a ".env" file in the root directory
-of this repo, in the following format:
 ```
-ADMIN_ADDRESS="<your public key here>"
-ORIGINATOR_PRIVATE_KEY="<your private key here>"
+NETWORK=.. (optional, defaults to ghostnet)
+NODE_URL=.. (optional, defaults to https://ghostnet-archive.tzconnect.berlin
+
+CONTRACT=.. (required, has to be the name (without extension) of a contract that is present in contracts/)
+BURN_CAP=.. (optional, defaults to 0.1, it definesthe deployment cost in tez)
+
+ORIGINATOR_ADDRESS=.. (optional if not mainnet, otherwise required, the tz address used to deploy the contract)
+ORIGINATOR_PRIV_KEY=.. (same as above)
+
+DOCKER_ARGS=.. (optional, defaults to nothing, can be used to specify custom docker arguments to be specified in docker run executions)
 ```
 
-This file also allows a third optional setting, regardless of address initialization
-method, called "NODE_URL". By default we are currently using http://art-basel.tzconnect.berlin:18732. This is a Hangzhou2net testnet node. If you wish to deploy on a different net, set this variable to something else in the .env file.
+## Usage
 
-Then, run the `script/deploy-contract` script.
+Once input variables are correctly setup in `env`, call `/script/setup` if targeting a testnet, otherwise call `/script/deploy-contract`. The setup script does the same as `deploy-contract`, but before doing that it also generates a fresh tz address with loaded tez (from a testnet faucet) to use as the originator address (more convenient, but wont work on mainnet).
 
-## Address initialization
-
-Deploying a contract requires some tez present in the address associated to the
-private key. Since we're deploying on a testnet, we can use one
-of the public faucet services that provide us with free tez:
-
-- `@tezos_faucet_bot` on telegram
-- https://teztnets.xyz/
+The contract address of the resulting contract deployment will be present in the `env` file under variable `CONTRACT_ADDRESS`.

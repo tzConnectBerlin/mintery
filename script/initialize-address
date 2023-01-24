@@ -5,6 +5,8 @@ cd $SCRIPT_DIR/..
 set -u
 
 
+docker pull tezos/tezos:latest
+
 command -v jq >/dev/null 2>&1 || {
     echo >&2 'jq is a required prerequisite, it is currently not installed.'
     exit 1
