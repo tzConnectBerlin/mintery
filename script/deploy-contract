@@ -14,7 +14,7 @@ set +a
 [ -z $ORIGINATOR_ADDRESS ] && echo 'ORIGINATOR_ADDRESS not defined in env' && exit 1
 [ -z $ORIGINATOR_PRIV_KEY ] && echo 'ORIGINATOR_PRIV_KEY not defined in env' && exit 1
 
-export CONTRACT=${CONTRACT:-'fa2_multi_asset'}
+export CONTRACT=${CONTRACT:-'fa2'}
 export NODE_URL=${NODE_URL:-'https://ghostnet-archive.tzconnect.berlin'}
 export BURN_CAP=${BURN_CAP:-'0.1'}
 
